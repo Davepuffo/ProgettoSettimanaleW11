@@ -1,14 +1,29 @@
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import { useSelector } from "react-redux";
+
 const Player = () => {
+
+    const Music = useSelector(state => state.playedSong.songInAction)
     return (
         <div className="container-fluid fixed-bottom bg-container pt-1">
             <div className="row">
                 <div className="col-lg-10 offset-lg-2">
+
                     <div className="row">
-                        <div className="col-12 col-md-8 col-lg-6 offset-md-2 offset-lg-3 mt-1" id="playerControls">
+                        <div className="col-4 text-light">
+                            {Music[0] ?
+                                <Row>
+                                    <Col><img src={Music[0].album.cover_small} alt="" className="ms-5" />
+                                    </Col>
+                                    <Col>{Music[0].title}</Col>
+                                </Row> : <p></p>}
+                        </div>
+                        <div className="col-8 " id="playerControls">
                             <div className="row justify-content-center">
                                 <div className="col-2 col-sm-1">
                                     <a href="#">
-                                        <img src="/esercizio/public/playerbuttons/Shuffle.png" alt="shuffle" />
+                                        <img src="/public/playerbuttons/Shuffle.png" alt="shuffle" />
                                     </a>
                                 </div>
                                 <div className="col-2 col-sm-1">
@@ -49,7 +64,8 @@ const Player = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
+
     );
 };
 

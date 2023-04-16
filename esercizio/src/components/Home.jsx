@@ -1,85 +1,45 @@
-import Container from 'react-bootstrap/Container'
-import Col from 'react-bootstrap/Col'
-import Row from 'react-bootstrap/Row'
-import Button from 'react-bootstrap/Button'
-import SearchBar from './SearchBar'
-import { useEffect } from 'react'
 import ListCategory from './ListCategory'
 import Player from './Player'
+import { useState } from 'react'
+import { Container, Row, Col, Form, Button } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import Spinner from 'react-bootstrap/Spinner'
+import Alert from 'react-bootstrap/Alert'
 
 const Home = () => {
+    const navigate = useNavigate()
+    const [query, setQuery] = useState('')
+    const [searchSong, SetSearchSong] = useState([])
+    const [IsLoading, setIsLoading] = useState(false)
+    const [IsError, setIsError] = useState(false)
 
-    // let rockArtists = [
-    //     'queen',
-    //     'u2',
-    //     'thepolice',
-    //     'eagles',
-    //     'thedoors',
-    //     'oasis',
-    //     'thewho',
-    //     'bonjovi',
-    // ]
+    const handleChange = (e) => {
+        setQuery(e.target.value)
+    }
 
-    // let popArtists = [
-    //     'maroon5',
-    //     'coldplay',
-    //     'onerepublic',
-    //     'jamesblunt',
-    //     'katyperry',
-    //     'arianagrande',
-    // ]
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        try {
+            setIsLoading(true)
+            let response = await fetch('https://striveschool-api.herokuapp.com/api/deezer/search?q=' + query)
+            if (response.ok) {
+                let result = await response.json()
+                SetSearchSong(result.data)
+                console.log(result.data)
+                setIsLoading(false)
+            } else {
+                console.log('error')
+                setIsError(true)
+                setIsLoading(false)
+            }
+        } catch (err) {
+            console.log(err)
+            setIsLoading(false)
+            setIsError(true)
+        }
+    }
 
-    // let hipHopArtists = [
-    //     'eminem',
-    //     'snoopdogg',
-    //     'lilwayne',
-    //     'drake',
-    //     'kanyewest',
-    // ]
-
-
-
-
-
-    // window.onload = async () => {
-    //     let rockRandomArtists = []
-    //     let popRandomArtists = []
-    //     let hipHopRandomArtists = []
-
-    //     document.querySelector('#searchField').value = ''
-
-    //     while (rockRandomArtists.length < 4) {
-    //         let artist =
-    //             rockArtists[Math.floor(Math.random() * rockArtists.length)]
-    //         if (!rockRandomArtists.includes(artist)) {
-    //             rockRandomArtists.push(artist)
-    //         }
-    //     }
-
-    //     while (popRandomArtists.length < 4) {
-    //         let artist = popArtists[Math.floor(Math.random() * popArtists.length)]
-    //         if (!popRandomArtists.includes(artist)) {
-    //             popRandomArtists.push(artist)
-    //         }
-    //     }
-
-    //     while (hipHopRandomArtists.length < 4) {
-    //         let artist =
-    //             hipHopArtists[Math.floor(Math.random() * hipHopArtists.length)]
-    //         if (!hipHopRandomArtists.includes(artist)) {
-    //             hipHopRandomArtists.push(artist)
-    //         }
-    //     }
-
-    //     for (let j = 0; j < rockRandomArtists.length; j++)
-    //         await handleArtist(rockRandomArtists[j], '#rockSection')
-
-    //     for (let k = 0; k < popRandomArtists.length; k++)
-    //         await handleArtist(popRandomArtists[k], '#popSection')
-
-    //     for (let l = 0; l < hipHopRandomArtists.length; l++)
-    //         await handleArtist(hipHopRandomArtists[l], '#hipHopSection')
-    // }
 
     return (
         <>
@@ -92,14 +52,15 @@ const Home = () => {
                             id="sidebar"
                         >
                             <div className="nav-container">
-                                <a className="navbar-brand" href="/">
+                                <Link className="navbar-brand" to="/">
                                     <img
-                                        src="/esercizio/public/Spotify_Logo.png"
+                                        src="/public/Spotify_Logo.png"
                                         alt="logo/Spotify_Logo.png"
                                         width="131"
                                         height="40"
+                                        color='white'
                                     />
-                                </a>
+                                </Link>
                                 <button
                                     className="navbar-toggler"
                                     type="button"
@@ -115,19 +76,28 @@ const Home = () => {
                                     <div className="navbar-nav">
                                         <ul>
                                             <li>
-                                                <a className="nav-item nav-link" href="/"
+                                                <Link className="nav-item nav-link text-start" to={'/'}
                                                 ><i className="fas fa-home fa-lg"></i>&nbsp; Home
-                                                </a>
+                                                </Link>
                                             </li>
                                             <li>
-                                                <a className="nav-item nav-link" href="#"
+                                                <a className="nav-item nav-link text-start" href="#"
                                                 ><i className="fas fa-book-open fa-lg"></i>&nbsp; Your
                                                     Library</a
                                                 >
                                             </li>
                                             <li>
-                                                <p>barra di ricerca</p>
-                                                {/* <SearchBar /> */}
+                                                <div className="input-group mt-3">
+                                                    <input type="text" className="form-control mb-2" id="searchField" placeholder="Search"
+                                                        aria-label="Search" aria-describedby="basic-addon2" onChange={handleChange} value={query} />
+                                                    <div className="input-group-append">
+                                                        {/* style="margin-bottom: 4%" */}
+                                                        <button className="btn btn-outline-secondary btn-sm py-2" type="button" id="button-addon1"
+                                                            onClick={handleSubmit}>
+                                                            GO
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </li>
                                         </ul>
                                     </div>
@@ -158,15 +128,52 @@ const Home = () => {
                         </Row>
                         <Row>
                             <div className="col-10">
-                                <div id="searchResults" className='d-none'>
-                                    <h2>Search Results</h2>
-                                    <Row
-                                        className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 imgLinks py-3"
-                                    ></Row>
-                                </div>
+                                <Row
+                                    className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 imgLinks py-3"
+                                >
+                                    {IsError && (
+                                        <Alert variant="danger">Qualcosa è andato storto!</Alert>
+                                    )}
+                                    {IsLoading && (
+                                        <div className="text-center">
+                                            <Spinner animation="border" role="status" variant="success">
+                                                <span className="visually-hidden">Loading...</span>
+                                            </Spinner>
+                                        </div>
+                                    )}
+
+                                    {searchSong ?
+                                        <>
+                                            <h2>Search Results</h2>
+                                            {searchSong.slice(0, 4).map((song) => (
+                                                <>
+                                                    <div className="col text-center mx-3" id={song.album.title} key={song.id}>
+                                                        <Link to={'/album/' + song.album.id} data={song.id} >
+                                                            <img className="img-fluid" src={song.album.cover_medium} alt="1" style={{ height: 150, width: 150 }} />
+                                                        </Link>
+                                                        <p>
+                                                            <Link to={'/album/' + song.album.id} data={song.id} className="text-decoration-none text-light">
+                                                                Album: {song.album.title.length < 16
+                                                                    ? `${song.album.title}`
+                                                                    : `${song.album.title.substring(0, 16)}...`}
+                                                                <br />
+                                                            </Link>
+                                                            <Link to={'/artist/' + song.artist.id} className="text-decoration-none text-light"> Artist: {song.artist.name}</Link>
+                                                        </p>
+                                                    </div>
+                                                </>
+                                            ))
+                                            }
+                                        </>
+                                        :
+                                        (<div>.</div>)
+                                    }
+
+                                </Row>
+
                             </div>
                         </Row>
-
+                        <ListCategory />
                     </div>
                 </Row >
             </Container >

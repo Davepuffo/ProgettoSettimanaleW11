@@ -10,9 +10,8 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Home />
         <Routes>
-          <Route path='/' element={<ListCategory />} />
+          <Route path='/' element={<Home />} />
           <Route path='/artist/:idArtist' element={<ArtistPage />} />
           <Route path='/album/:idAlbum' element={<AlbumPage />} />
         </Routes>
